@@ -181,7 +181,9 @@ isNotEqual(int x, int y) {
  */
 int
 getByte(int x, int n) {
-  return (x&(0xff<<(n>>3)))>>(n>>3);
+  int bitsToMove = (n<<3);
+  int ones = 0xff;
+  return ((x & (ones<<bitsToMove)) >> bitsToMove) & ones;
 }
 
 /* 

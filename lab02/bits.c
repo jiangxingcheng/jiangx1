@@ -156,7 +156,7 @@ bitNor(int x, int y) {
  */
 int
 bitXor(int x, int y) {
-  return 2;
+  return ~(x & y) & (~(~x & ~y));
 }
 
 /* 
@@ -168,7 +168,7 @@ bitXor(int x, int y) {
  */
 int
 isNotEqual(int x, int y) {
-  return 2;
+  return !(!(x ^ y));
 }
 
 /* 
@@ -181,7 +181,7 @@ isNotEqual(int x, int y) {
  */
 int
 getByte(int x, int n) {
-  return 2;
+  return (x&(0xff<<(n>>3)))>>(n>>3);
 }
 
 /* 

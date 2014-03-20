@@ -193,10 +193,9 @@ getByte(int x, int n) {
  *   Max ops: 5
  *   Rating: 2
  */
-
 int
 copyLSB(int x) {
-  return 2;
+  return (~(x & 1)) + 1;
 }
 
 /* 

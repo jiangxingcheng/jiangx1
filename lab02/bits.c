@@ -208,7 +208,10 @@ copyLSB(int x) {
  */
 int
 logicalShift(int x, int n) {
-  return 2;
+  int shiftNum = n + (~(1) + 1);
+  int arithmeticShifted = x >> n;
+  int reference = ~((1 << 31) >> shiftNum);
+  return arithmeticShifted & reference;
 }
 
 /*

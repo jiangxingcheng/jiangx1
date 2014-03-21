@@ -235,7 +235,26 @@ bitCount(int x) {
  */
 int
 bang(int x) {
-  return 2;
+  /*
+   * INPUT  00000000
+      FLIP  11111111
+        +1  00000000
+        &x  00000000 -- We get the mask indicating the position of least bit.
+      FLIP  11111111
+        +1  00000000 -- The leftmost digit determines the result. I.e.: [0]0000000
+      >>31  00000000
+        +1  00000001
+     ===============
+      INPUT 11001000
+       FLIP 00110111
+         +1 00111000
+         &x 00001000 -- We get the mask indicating the position of least bit.
+       FLIP 11110111
+         +1 11111000 -- The leftmost digit determines the result. I.e.: [1]1111000
+       >>31 11111111
+         +1 00000000
+   */
+  return ((~((~(x) + 1) & x) + 1) >> 31) + 1;
 }
 
 /* 
@@ -248,7 +267,7 @@ bang(int x) {
  */
 int
 leastBitPos(int x) {
-  return 2;
+  return (~(x) + 1) & x;
 }
 
 /* 

@@ -224,9 +224,16 @@ logicalShift(int x, int n) {
 int
 bitCount(int x) {
   int ones = 0x1 | (0x1 << 8);
-  ones = ones | (ones << 16);  
-  int fourParts = (x & ones) + ((x >> 1) & ones) + ((x >> 2) & ones) + ((x >> 3) & ones) + ((x >> 4) & ones) + ((x >> 5) & ones) + ((x >> 6) & ones) + ((x >> 7) & ones);
-  int twoParts = fourParts + (fourParts >> 16);
+  int ones2 = ones | (ones << 16);  
+  int fourParts = x & ones2;
+  int fourParts1 = fourParts + ((x >> 1) & ones2);
+  int fourParts2 = fourParts1 + ((x >> 2) & ones2);
+  int fourParts3 = fourParts2 + ((x >> 3) & ones2);
+  int fourParts4 = fourParts3 + ((x >> 4) & ones2);
+  int fourParts5 = fourParts4 + ((x >> 5) & ones2);
+  int fourParts6 = fourParts5 + ((x >> 6) & ones2);
+  int fourParts7 = fourParts6 + ((x >> 7) & ones2);
+  int twoParts = fourParts7 + (fourParts7 >> 16);
   return((twoParts + (twoParts >> 8)) & 0x3F);
 }
 
@@ -328,8 +335,11 @@ isGreater(int x, int y) {
  */
 int
 divpwr2(int x, int n) {
-
-  return x >> n;
+  int isNegative = x >> 31;
+  int positiveShift = x >> n;
+  int decimalPart = x & (~((~(1 << n)) + 1));
+  int negativeShift = (x >> n) + (!!decimalPart);
+  return ((~isNegative) & positiveShift) | (isNegative & negativeShift);
 }
 
 /* 

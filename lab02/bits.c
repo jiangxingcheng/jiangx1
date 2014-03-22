@@ -306,7 +306,16 @@ isNonNegative(int x) {
  */
 int
 isGreater(int x, int y) {
-  return 2;
+  int signOfX = (x >> 31) & 1;
+  int signOfY = (y >> 31) & 1;
+  int compareSign = !(signOfX) & (signOfY);
+  // printf("signOfX = %d, signOfY = %d, compareSign = %d\n", signOfX, signOfY, compareSign);
+
+  int sameSign = !(signOfX ^ signOfY);
+  int yMinusX = y + (~(x) + 1);
+  int compareNum = ((yMinusX >> 31) & 1);
+  // printf("sameSign = %d, yMinusX = %d, compareNum = %d\n", sameSign, yMinusX, compareNum);
+  return compareSign | (sameSign & compareNum);
 }
 
 /* 

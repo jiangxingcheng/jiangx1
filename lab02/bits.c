@@ -328,7 +328,8 @@ isGreater(int x, int y) {
  */
 int
 divpwr2(int x, int n) {
-  return 2;
+
+  return x >> n;
 }
 
 /* 

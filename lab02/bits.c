@@ -351,7 +351,8 @@ divpwr2(int x, int n) {
  */
 int
 absVal(int x) {
-  return 2;
+  int isNegative = x >> 31;
+  return ((~isNegative) & x) | (isNegative & ((~x) + 1));
 }
 
 /* 

@@ -365,5 +365,10 @@ absVal(int x) {
  */
 int
 addOK(int x, int y) {
-  return 2;
+  int signOfXInverse = (x >> 31) + 1;
+  int signOfYInverse = (y >> 31) + 1;
+  int differentSign = signOfXInverse ^ signOfYInverse;
+  int xPlusY = x + y;
+  int signOfXPlusYInverse = (xPlusY >> 31) + 1;
+  return (differentSign & 1) | ((!differentSign) & (!(signOfXInverse ^ signOfXPlusYInverse)));
 }

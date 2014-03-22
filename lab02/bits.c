@@ -223,7 +223,11 @@ logicalShift(int x, int n) {
  */
 int
 bitCount(int x) {
-  return 2;
+  int ones = 0x1 | (0x1 << 8);
+  ones = ones | (ones << 16);  
+  int fourParts = (x & ones) + ((x >> 1) & ones) + ((x >> 2) & ones) + ((x >> 3) & ones) + ((x >> 4) & ones) + ((x >> 5) & ones) + ((x >> 6) & ones) + ((x >> 7) & ones);
+  int twoParts = fourParts + (fourParts >> 16);
+  return((twoParts + (twoParts >> 8)) & 0x3F);
 }
 
 /* 

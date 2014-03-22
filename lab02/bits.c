@@ -282,7 +282,7 @@ leastBitPos(int x) {
  */
 int
 tmax(void) {
-  return 2;
+  return ~(0x1 << 31);
 }
 
 /* 
@@ -294,7 +294,7 @@ tmax(void) {
  */
 int
 isNonNegative(int x) {
-  return 2;
+  return !((x >> 31) & 1);
 }
 
 /* 

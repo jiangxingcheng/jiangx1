@@ -181,7 +181,9 @@ isNotEqual(int x, int y) {
  */
 int
 getByte(int x, int n) {
-  return (x&(0xff<<(n>>3)))>>(n>>3);
+  int bitsToMove = (n<<3);
+  int ones = 0xff;
+  return ((x & (ones<<bitsToMove)) >> bitsToMove) & ones;
 }
 
 /* 
@@ -191,10 +193,9 @@ getByte(int x, int n) {
  *   Max ops: 5
  *   Rating: 2
  */
-
 int
 copyLSB(int x) {
-  return 2;
+  return (~(x & 1)) + 1;
 }
 
 /* 
@@ -207,7 +208,10 @@ copyLSB(int x) {
  */
 int
 logicalShift(int x, int n) {
-  return 2;
+  int shiftNum = n + (~(1) + 1);
+  int arithmeticShifted = x >> n;
+  int reference = ~((1 << 31) >> shiftNum);
+  return arithmeticShifted & reference;
 }
 
 /*
@@ -219,7 +223,18 @@ logicalShift(int x, int n) {
  */
 int
 bitCount(int x) {
-  return 2;
+  int ones = 0x1 | (0x1 << 8);
+  int ones2 = ones | (ones << 16);  
+  int fourParts = x & ones2;
+  int fourParts1 = fourParts + ((x >> 1) & ones2);
+  int fourParts2 = fourParts1 + ((x >> 2) & ones2);
+  int fourParts3 = fourParts2 + ((x >> 3) & ones2);
+  int fourParts4 = fourParts3 + ((x >> 4) & ones2);
+  int fourParts5 = fourParts4 + ((x >> 5) & ones2);
+  int fourParts6 = fourParts5 + ((x >> 6) & ones2);
+  int fourParts7 = fourParts6 + ((x >> 7) & ones2);
+  int twoParts = fourParts7 + (fourParts7 >> 16);
+  return((twoParts + (twoParts >> 8)) & 0x3F);
 }
 
 /* 
@@ -231,7 +246,26 @@ bitCount(int x) {
  */
 int
 bang(int x) {
-  return 2;
+  /*
+   * INPUT  00000000
+      FLIP  11111111
+        +1  00000000
+        &x  00000000 -- We get the mask indicating the position of least bit.
+      FLIP  11111111
+        +1  00000000 -- The leftmost digit determines the result. I.e.: [0]0000000
+      >>31  00000000
+        +1  00000001
+     ===============
+      INPUT 11001000
+       FLIP 00110111
+         +1 00111000
+         &x 00001000 -- We get the mask indicating the position of least bit.
+       FLIP 11110111
+         +1 11111000 -- The leftmost digit determines the result. I.e.: [1]1111000
+       >>31 11111111
+         +1 00000000
+   */
+  return ((~((~(x) + 1) & x) + 1) >> 31) + 1;
 }
 
 /* 
@@ -244,7 +278,7 @@ bang(int x) {
  */
 int
 leastBitPos(int x) {
-  return 2;
+  return (~(x) + 1) & x;
 }
 
 /* 
@@ -255,7 +289,7 @@ leastBitPos(int x) {
  */
 int
 tmax(void) {
-  return 2;
+  return ~(0x1 << 31);
 }
 
 /* 
@@ -267,7 +301,7 @@ tmax(void) {
  */
 int
 isNonNegative(int x) {
-  return 2;
+  return !((x >> 31) & 1);
 }
 
 /* 
@@ -279,7 +313,16 @@ isNonNegative(int x) {
  */
 int
 isGreater(int x, int y) {
-  return 2;
+  int signOfX = (x >> 31) & 1;
+  int signOfY = (y >> 31) & 1;
+  int compareSign = !(signOfX) & (signOfY);
+  // printf("signOfX = %d, signOfY = %d, compareSign = %d\n", signOfX, signOfY, compareSign);
+
+  int sameSign = !(signOfX ^ signOfY);
+  int yMinusX = y + (~(x) + 1);
+  int compareNum = ((yMinusX >> 31) & 1);
+  // printf("sameSign = %d, yMinusX = %d, compareNum = %d\n", sameSign, yMinusX, compareNum);
+  return compareSign | (sameSign & compareNum);
 }
 
 /* 
@@ -292,7 +335,11 @@ isGreater(int x, int y) {
  */
 int
 divpwr2(int x, int n) {
-  return 2;
+  int isNegative = x >> 31;
+  int positiveShift = x >> n;
+  int decimalPart = x & (~((~(1 << n)) + 1));
+  int negativeShift = (x >> n) + (!!decimalPart);
+  return ((~isNegative) & positiveShift) | (isNegative & negativeShift);
 }
 
 /* 
@@ -304,7 +351,8 @@ divpwr2(int x, int n) {
  */
 int
 absVal(int x) {
-  return 2;
+  int isNegative = x >> 31;
+  return ((~isNegative) & x) | (isNegative & ((~x) + 1));
 }
 
 /* 
@@ -317,5 +365,10 @@ absVal(int x) {
  */
 int
 addOK(int x, int y) {
-  return 2;
+  int signOfXInverse = (x >> 31) + 1;
+  int signOfYInverse = (y >> 31) + 1;
+  int differentSign = signOfXInverse ^ signOfYInverse;
+  int xPlusY = x + y;
+  int signOfXPlusYInverse = (xPlusY >> 31) + 1;
+  return (differentSign & 1) | ((!differentSign) & (!(signOfXInverse ^ signOfXPlusYInverse)));
 }

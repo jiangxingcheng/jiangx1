@@ -144,6 +144,7 @@ NOTES:
  */
 int
 bitNor(int x, int y) {
+  /* Using the De Morgan's Rule. */
   return (~x) & (~y);
 }
 

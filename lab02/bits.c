@@ -144,7 +144,7 @@ NOTES:
  */
 int
 bitNor(int x, int y) {
-  /* Using the De Morgan's Rule. */
+  /* Using the DeMorgan's Law. */
   return (~x) & (~y);
 }
 
@@ -157,6 +157,7 @@ bitNor(int x, int y) {
  */
 int
 bitXor(int x, int y) {
+  /* Using the DeMorgan's Law. */
   return ~(x & y) & (~(~x & ~y));
 }
 
@@ -169,6 +170,7 @@ bitXor(int x, int y) {
  */
 int
 isNotEqual(int x, int y) {
+  /* if A not equals to zero, !A = 0; if A = 0, !A = 1. */
   return !(!(x ^ y));
 }
 
@@ -182,6 +184,7 @@ isNotEqual(int x, int y) {
  */
 int
 getByte(int x, int n) {
+  /* Move n bytes left and then do & with x, and then move n bytes back.*/
   int bitsToMove = (n<<3);
   int ones = 0xff;
   return ((x & (ones<<bitsToMove)) >> bitsToMove) & ones;
@@ -196,6 +199,7 @@ getByte(int x, int n) {
  */
 int
 copyLSB(int x) {
+  /* use X and with 1 and flip it add 1 to get copy and it's equal to X*/
   return (~(x & 1)) + 1;
 }
 
@@ -209,6 +213,7 @@ copyLSB(int x) {
  */
 int
 logicalShift(int x, int n) {
+  /* arithmeticShifted is move x right n bytes, and us arithmeticShifted AND with refernce.*/
   int shiftNum = n + (~(1) + 1);
   int arithmeticShifted = x >> n;
   int reference = ~((1 << 31) >> shiftNum);
@@ -224,6 +229,7 @@ logicalShift(int x, int n) {
  */
 int
 bitCount(int x) {
+  /* divide X into 8 parts and count the number of 1 in each part and add them together.*/
   int ones = 0x1 | (0x1 << 8);
   int ones2 = ones | (ones << 16);  
   int fourParts = x & ones2;
@@ -279,6 +285,7 @@ bang(int x) {
  */
 int
 leastBitPos(int x) {
+  /* flip x and add 1 then AND with itself.*/
   return (~(x) + 1) & x;
 }
 
@@ -302,6 +309,7 @@ tmax(void) {
  */
 int
 isNonNegative(int x) {
+  /* Using ! to return 1 if the number is >=0.*/
   return !((x >> 31) & 1);
 }
 
@@ -314,6 +322,7 @@ isNonNegative(int x) {
  */
 int
 isGreater(int x, int y) {
+  /* seperate numbers into two groups to compare, one is same signed which will compare the number , the other is different sign which comare the sign*/
   int signOfX = (x >> 31) & 1;
   int signOfY = (y >> 31) & 1;
   int compareSign = !(signOfX) & (signOfY);
@@ -336,6 +345,7 @@ isGreater(int x, int y) {
  */
 int
 divpwr2(int x, int n) {
+  /* use the isNegative to judge whether the number is negative or not and compute them in different ways.*/
   int isNegative = x >> 31;
   int positiveShift = x >> n;
   int decimalPart = x & (~((~(1 << n)) + 1));
@@ -352,6 +362,7 @@ divpwr2(int x, int n) {
  */
 int
 absVal(int x) {
+  /* if the number is negative, move 31 bytes to right to be a postive number.*/
   int isNegative = x >> 31;
   return ((~isNegative) & x) | (isNegative & ((~x) + 1));
 }
@@ -366,6 +377,7 @@ absVal(int x) {
  */
 int
 addOK(int x, int y) {
+  /* divided negative and postive numbers into two groups and judge the product of these two numbers whether they are overflowed.*/
   int signOfXInverse = (x >> 31) + 1;
   int signOfYInverse = (y >> 31) + 1;
   int differentSign = signOfXInverse ^ signOfYInverse;
